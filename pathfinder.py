@@ -97,8 +97,11 @@ class Campo:
                 if self.blocos[j][i].estado == "fim":
                     bloco.config(bg="red", fg="black")
 
-                if self.blocos[j][i].estado == "camiho":
+                if self.blocos[j][i].estado == "caminho":
                     bloco.config(bg="green", fg="black")
+
+                if self.blocos[j][i].estado == "marcado":
+                    bloco.config(bg="gray", fg="red")
 
                 if self.blocos[j][i].estado == "parede":
                     bloco.config(bg="black", fg="white")
@@ -107,29 +110,38 @@ class Campo:
                 campo[j][i] = bloco
 
     def waveFront(self):
-        self.inicio
-        self.fim
+        # print(self.inicio.i)
+        # print(self.inicio.j)
+        # print()
+        # print(self.fim.i)
+        # print(self.fim.j)
 
-        print(self.inicio.i)
-        print(self.inicio.j)
-        print()
-        print(self.fim.i)
-        print(self.fim.j)
+        # print()
+        # print(self.blocos[self.inicio.j][self.inicio.i].estado)
+        # print(self.blocos[self.inicio.j][self.inicio.i].valor)
+        # print()
+        # print(self.blocos[self.fim.j][self.fim.i].estado)
+        # print(self.blocos[self.fim.j][self.fim.i].valor)
 
-        wave_number = 1
+        wave_number = 0
 
-        print()
-        print(self.blocos[self.inicio.j][self.inicio.i].estado)
-        print(self.blocos[self.inicio.j][self.inicio.i].valor)
-
-        while self.blocos[self.inicio.j][self.inicio.i].valor == 0:
+        while self.blocos[self.fim.j][self.fim.i].valor == 0:
             print(wave_number)
+
             for j in range(self.colunas):
                 for i in range(self.linhas):
                     if (
-                        self.blocos[j][i].estado == "vazio"
-                        and self.blocos[j][i].valor == wave_number
-                    ):
+                        self.blocos[j][i].estado == "marcado"
+                        or self.blocos[j][i].estado == "fim"
+                    ) and self.blocos[j][i].valor == wave_number:
+                        print(self.blocos[j][i].estado)
+                        print(self.blocos[j][i].valor)
+                        print(j, i)
+
+                    if (
+                        self.blocos[j][i].estado == "marcado"
+                        or self.blocos[j][i].estado == "fim"
+                    ) and self.blocos[j][i].valor == wave_number:
                         vizinhos = [
                             (j - 1, i),
                             (j + 1, i),
@@ -141,15 +153,25 @@ class Campo:
                             (j + 1, i + 1),
                         ]
 
-                        for x, y in vizinhos:
+                        for jAux, iAux in vizinhos:
+                            print(
+                                0 <= jAux < self.colunas
+                                and 0 <= iAux < self.linhas
+                                and self.blocos[jAux][iAux].estado == "vazio"
+                            )
+                            print()
+
                             if (
-                                0 <= x < rows
-                                and 0 <= y < cols
-                                and self.blocos[j][i].estado == "vazio"
-                                and self.blocos[j][i].estado == "vazio"
+                                0 <= jAux < self.colunas
+                                and 0 <= iAux < self.linhas
+                                and (
+                                    self.blocos[jAux][iAux].estado == "vazio"
+                                    or self.blocos[jAux][iAux].estado == "inicio"
+                                )
                             ):
-                                self.blocos[j][i].valor = wave_number + 1
-                                self.blocos[j][i].estado = "caminho"
+                                self.blocos[jAux][iAux].valor = wave_number + 1
+                                if self.blocos[jAux][iAux].estado == "vazio":
+                                    self.blocos[jAux][iAux].estado = "marcado"
 
             wave_number += 1
 
