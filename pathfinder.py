@@ -110,34 +110,11 @@ class Campo:
                 campo[j][i] = bloco
 
     def waveFront(self):
-        # print(self.inicio.i)
-        # print(self.inicio.j)
-        # print()
-        # print(self.fim.i)
-        # print(self.fim.j)
-
-        # print()
-        # print(self.blocos[self.inicio.j][self.inicio.i].estado)
-        # print(self.blocos[self.inicio.j][self.inicio.i].valor)
-        # print()
-        # print(self.blocos[self.fim.j][self.fim.i].estado)
-        # print(self.blocos[self.fim.j][self.fim.i].valor)
-
         wave_number = 0
 
-        while self.blocos[self.fim.j][self.fim.i].valor == 0:
-            print(wave_number)
-
+        while self.blocos[self.inicio.j][self.inicio.i].valor == 0:
             for j in range(self.colunas):
                 for i in range(self.linhas):
-                    if (
-                        self.blocos[j][i].estado == "marcado"
-                        or self.blocos[j][i].estado == "fim"
-                    ) and self.blocos[j][i].valor == wave_number:
-                        print(self.blocos[j][i].estado)
-                        print(self.blocos[j][i].valor)
-                        print(j, i)
-
                     if (
                         self.blocos[j][i].estado == "marcado"
                         or self.blocos[j][i].estado == "fim"
@@ -154,13 +131,6 @@ class Campo:
                         ]
 
                         for jAux, iAux in vizinhos:
-                            print(
-                                0 <= jAux < self.colunas
-                                and 0 <= iAux < self.linhas
-                                and self.blocos[jAux][iAux].estado == "vazio"
-                            )
-                            print()
-
                             if (
                                 0 <= jAux < self.colunas
                                 and 0 <= iAux < self.linhas
