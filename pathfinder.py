@@ -1,5 +1,7 @@
 import tkinter as tk
+from tkinter import *
 import random
+import copy
 
 
 class Bloco:
@@ -112,23 +114,17 @@ class Campo:
     def waveFront(self):
         wave_number = 0
 
-        while self.blocos[self.inicio.j][self.inicio.i].valor == 0:
+        while (
+            self.blocos[self.inicio.j][self.inicio.i].valor == 0
+            and wave_number < max([self.linhas, self.colunas]) + 1
+        ):
             for j in range(self.colunas):
                 for i in range(self.linhas):
                     if (
                         self.blocos[j][i].estado == "marcado"
                         or self.blocos[j][i].estado == "fim"
                     ) and self.blocos[j][i].valor == wave_number:
-                        vizinhos = [
-                            (j - 1, i),
-                            (j + 1, i),
-                            (j, i - 1),
-                            (j, i + 1),
-                            (j - 1, i - 1),
-                            (j - 1, i + 1),
-                            (j + 1, i - 1),
-                            (j + 1, i + 1),
-                        ]
+                        vizinhos = [(j - 1, i), (j + 1, i), (j, i - 1), (j, i + 1)]
 
                         for jAux, iAux in vizinhos:
                             if (
@@ -145,19 +141,54 @@ class Campo:
 
             wave_number += 1
 
+    def gerarCaminho(self):
+        blocoAtual = copy.copy(self.inicio)
+        passos = 0
+
+        while not (blocoAtual.i == self.fim.i and blocoAtual.j == self.fim.j):
+            vizinhos = [
+                (blocoAtual.j - 1, blocoAtual.i),
+                (blocoAtual.j + 1, blocoAtual.i),
+                (blocoAtual.j, blocoAtual.i - 1),
+                (blocoAtual.j, blocoAtual.i + 1),
+            ]
+
+            opcao = []
+
+            for jAux, iAux in vizinhos:
+                if (
+                    0 <= jAux < self.colunas
+                    and 0 <= iAux < self.linhas
+                    and self.blocos[jAux][iAux].estado == "marcado"
+                    and self.blocos[jAux][iAux].valor < blocoAtual.valor
+                ):
+                    opcao.append(self.blocos[jAux][iAux])
+
+            if len(opcao) != 0:
+                escolha = random.choice(opcao)
+            else:
+                return
+
+            self.blocos[escolha.j][escolha.i].estado = "caminho"
+            blocoAtual = copy.copy(escolha)
+
+            passos += 1
+
 
 root = tk.Tk()
-root.title("Malha Quadriculada")
-campo = Campo(root, 20, 20)
+root.title("Path Finder")
+root.state("zoomed")
+frame = Frame(root)
+frame.grid()
+
+
+campo = Campo(frame, 20, 20)
 
 campo.gerarInicio()
 campo.gerarFim()
-campo.gerarObstaculos()
-campo.gerarObstaculos()
-campo.gerarObstaculos()
-campo.gerarObstaculos()
-campo.gerarObstaculos()
+# campo.gerarObstaculos()
 campo.waveFront()
+campo.gerarCaminho()
 campo.criarInterface()
 
 root.mainloop()
